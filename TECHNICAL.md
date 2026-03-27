@@ -314,7 +314,7 @@ dbt run --select marts   # Apenas Gold layer
 - [ ] Publicar dashboard no Power BI Service
 - [ ] Testes de qualidade com Great Expectations
 - [ ] Deploy do Airflow no Cloud Composer (GCP managed)
-- [ ] Análise preditiva de custos por commodity
+- [ ] Particionamento incremental na Silver (evitar re-processamento histórico)
 
 ---
 
