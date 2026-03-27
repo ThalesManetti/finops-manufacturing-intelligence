@@ -1,0 +1,103 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: "Camada Bronze — dados brutos carregados do GCS pelo Airflow"
+    database: finops-manufacturing-2026
+    schema: bronze_manufacturing
+    
+    tables:
+      - name: raw_vendas
+        description: "Transações de venda de autopeças (~9.150 registros, 2022-2024)"
+        columns:
+          - name: venda_id
+            description: "PK — Identificador único da venda (VND-0000001)"
+            tests:
+              - not_null
+              - unique
+          - name: data_emissao
+            description: "Data de emissão da nota fiscal"
+          - name: produto_id
+            description: "FK — Referência ao cadastro de produtos"
+          - name: cliente_id
+            description: "FK — Referência ao cadastro de clientes"
+          - name: valor_bruto
+            description: "Valor bruto da venda (quantidade × preço unitário)"
+          - name: valor_liquido
+            description: "Valor líquido (bruto - desconto - devolução)"
+
+      - name: raw_custos
+        description: "CMV mensal por produto (1.764 registros)"
+        columns:
+          - name: produto_id
+            description: "FK — Referência ao produto"
+            tests:
+              - not_null
+          - name: mes_referencia
+            description: "Primeiro dia do mês de referência"
+            tests:
+              - not_null
+          - name: custo_total_unitario
+            description: "Custo total unitário real (MP + MOD + CIF)"
+
+      - name: raw_despesas
+        description: "Despesas operacionais mensais (864 registros)"
+        columns:
+          - name: despesa_id
+            description: "PK — Identificador único da despesa"
+            tests:
+              - not_null
+              - unique
+          - name: classificacao_dre
+            description: "Classificação na DRE"
+            tests:
+              - accepted_values:
+                  values: ['DESPESA_FABRICA', 'DESPESA_VENDAS', 'DESPESA_ADMIN', 'DEPRECIACAO', 'RESULTADO_FINANCEIRO']
+
+      - name: raw_orcamento
+        description: "Orçamento anual por natureza e mês (~900 registros)"
+        columns:
+          - name: orcamento_id
+            description: "PK — Identificador do registro de orçamento"
+            tests:
+              - not_null
+              - unique
+
+      - name: raw_produtos
+        description: "Cadastro de 50 autopeças em 4 linhas de produção"
+        columns:
+          - name: produto_id
+            description: "PK — Identificador único do produto (PROD-0001)"
+            tests:
+              - not_null
+              - unique
+
+      - name: raw_centros_custo
+        description: "14 centros de custo da fábrica"
+        columns:
+          - name: centro_custo_id
+            description: "PK — Identificador do centro de custo"
+            tests:
+              - not_null
+              - unique
+
+      - name: raw_clientes
+        description: "24 clientes — 9 montadoras e 15 distribuidores"
+        columns:
+          - name: cliente_id
+            description: "PK — Identificador do cliente"
+            tests:
+              - not_null
+              - unique
+
+      - name: raw_historico_custos
+        description: "Histórico de mudanças de custo padrão — base para SCD Type 2 (381 registros)"
+        columns:
+          - name: historico_id
+            description: "PK — Identificador do registro histórico"
+            tests:
+              - not_null
+              - unique
+
+      - name: raw_commodities
+        description: "Índices mensais de commodities — aço, alumínio, polímero, misto (144 registros)"

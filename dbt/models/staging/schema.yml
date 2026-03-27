@@ -1,0 +1,158 @@
+version: 2
+
+models:
+  # ─────────────────────────────────────────────
+  # STAGING (SILVER)
+  # ─────────────────────────────────────────────
+
+  - name: stg_vendas
+    description: "Vendas limpas e padronizadas. Tipagem correta, nulos tratados, valores positivos."
+    columns:
+      - name: venda_id
+        description: "PK — Identificador único"
+        tests:
+          - not_null
+          - unique
+      - name: data_emissao
+        description: "Data de emissão da NF"
+        tests:
+          - not_null
+      - name: produto_id
+        description: "FK → stg_produtos"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_produtos')
+              field: produto_id
+      - name: cliente_id
+        description: "FK → stg_clientes"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_clientes')
+              field: cliente_id
+      - name: tipo_cliente
+        description: "Tipo do cliente"
+        tests:
+          - accepted_values:
+              values: ['MONTADORA', 'DISTRIBUIDOR']
+      - name: valor_bruto
+        description: "Valor bruto da venda"
+        tests:
+          - not_null
+      - name: valor_liquido
+        description: "Valor líquido (bruto - desconto - devolução)"
+        tests:
+          - not_null
+
+  - name: stg_custos
+    description: "CMV mensal por produto. Custo decomposto em MP, MOD e CIF."
+    columns:
+      - name: produto_id
+        description: "FK → stg_produtos"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_produtos')
+              field: produto_id
+      - name: mes_referencia
+        description: "Mês de referência do custo"
+        tests:
+          - not_null
+      - name: custo_total_unitario
+        description: "Custo total unitário real"
+        tests:
+          - not_null
+
+  - name: stg_despesas
+    description: "Despesas operacionais classificadas para DRE."
+    columns:
+      - name: despesa_id
+        description: "PK — Identificador único"
+        tests:
+          - not_null
+          - unique
+      - name: classificacao_dre
+        description: "Classificação na DRE"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['DESPESA_FABRICA', 'DESPESA_VENDAS', 'DESPESA_ADMIN', 'DEPRECIACAO', 'RESULTADO_FINANCEIRO']
+
+  - name: stg_produtos
+    description: "Cadastro de 50 autopeças com margem padrão calculada."
+    columns:
+      - name: produto_id
+        description: "PK — Identificador único"
+        tests:
+          - not_null
+          - unique
+      - name: status
+        description: "Status do produto"
+        tests:
+          - accepted_values:
+              values: ['ATIVO', 'INATIVO']
+      - name: linha_producao_id
+        description: "Linha de produção"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['LP01', 'LP02', 'LP03', 'LP04']
+
+  - name: stg_clientes
+    description: "Cadastro de 24 clientes — montadoras e distribuidores."
+    columns:
+      - name: cliente_id
+        description: "PK — Identificador único"
+        tests:
+          - not_null
+          - unique
+      - name: tipo_cliente
+        description: "Tipo do cliente"
+        tests:
+          - accepted_values:
+              values: ['MONTADORA', 'DISTRIBUIDOR']
+
+  - name: stg_orcamento
+    description: "Orçamento anual por natureza e mês."
+    columns:
+      - name: orcamento_id
+        description: "PK — Identificador único"
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_commodities
+    description: "Índices mensais de commodities."
+    columns:
+      - name: commodity
+        description: "Tipo de commodity"
+        tests:
+          - accepted_values:
+              values: ['ACO', 'ALUMINIO', 'POLIMERO', 'MISTO']
+
+  - name: dim_historico_custos
+    description: "SCD Type 2 — Histórico de mudanças de custo padrão com datas de vigência."
+    columns:
+      - name: historico_id
+        description: "PK — Identificador único do registro"
+        tests:
+          - not_null
+          - unique
+      - name: produto_id
+        description: "FK → stg_produtos"
+        tests:
+          - not_null
+      - name: valid_from
+        description: "Data de início da vigência do custo"
+        tests:
+          - not_null
+      - name: is_current
+        description: "Flag indicando se é o registro vigente"
+        tests:
+          - not_null
+      - name: motivo_alteracao
+        description: "Motivo da alteração de custo"
+        tests:
+          - accepted_values:
+              values: ['CUSTO_INICIAL', 'REAJUSTE_COMMODITY', 'REVISAO_TRIMESTRAL', 'RENEGOCIACAO_FORNECEDOR', 'ALTERACAO_PROCESSO']

@@ -1,0 +1,101 @@
+# =============================================================================
+# FinOps Manufacturing Intelligence — Setup do Ambiente
+# =============================================================================
+# Guia rápido para configurar o ambiente de desenvolvimento no Windows
+# com VS Code + Anaconda.
+# =============================================================================
+
+# ─────────────────────────────────────────────
+# 1. CRIAR O AMBIENTE CONDA
+# ─────────────────────────────────────────────
+# Abra o terminal do VS Code (Ctrl + `) ou o Anaconda Prompt:
+
+conda env create -f environment.yml
+
+# Ativar o ambiente:
+conda activate finops
+
+# Verificar se tudo instalou:
+python --version          # Esperado: Python 3.11.x
+dbt --version             # Esperado: dbt-core 1.7+
+pip show google-cloud-bigquery   # Esperado: versão 3.14+
+
+
+# ─────────────────────────────────────────────
+# 2. CONFIGURAR VS CODE
+# ─────────────────────────────────────────────
+# No VS Code:
+#   Ctrl + Shift + P > "Python: Select Interpreter"
+#   Selecione: Python 3.11.x ('finops')
+#
+# Extensões recomendadas (instale pelo VS Code):
+#   - Python (Microsoft)
+#   - Pylance (Microsoft)
+#   - dbt Power User (Fivetran)
+#   - Rainbow CSV
+#   - GitLens
+#   - PowerShell (Microsoft)
+#   - Docker (Microsoft)         # Para Fase 2
+
+
+# ─────────────────────────────────────────────
+# 3. CONFIGURAR TERMINAL POWERSHELL NO VS CODE
+# ─────────────────────────────────────────────
+# Para rodar scripts .ps1 no VS Code, pode ser preciso ajustar
+# a política de execução. Abra PowerShell como Admin e rode:
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Isso permite rodar scripts locais (.ps1) sem bloqueio.
+
+
+# ─────────────────────────────────────────────
+# 4. ESTRUTURA DE PASTAS (após setup completo)
+# ─────────────────────────────────────────────
+# finops-manufacturing/
+# ├── .gitignore
+# ├── environment.yml          ← Você está aqui
+# ├── README.md
+# ├── credentials/             ← NUNCA suba no Git
+# │   └── gcp-service-account.json
+# ├── data/
+# │   ├── csv/
+# │   ├── parquet/
+# │   └── generate_data.py
+# ├── scripts/
+# │   ├── setup_gcp.ps1
+# │   └── upload_gcs.ps1
+# ├── airflow/                 ← Fase 2
+# ├── dbt/                     ← Fases 3-4
+# ├── docs/
+# └── dashboards/              ← Fase 5
+
+
+# ─────────────────────────────────────────────
+# 5. ORDEM DE EXECUÇÃO DA FASE 1
+# ─────────────────────────────────────────────
+# 1) Criar ambiente:     conda env create -f environment.yml
+# 2) Ativar ambiente:    conda activate finops
+# 3) Gerar dados:        python data/generate_data.py
+# 4) Setup GCP:          .\scripts\setup_gcp.ps1
+# 5) Upload dados:       .\scripts\upload_gcs.ps1
+# 6) Validar:            bq ls --project_id=finops-manufacturing
+
+
+# ─────────────────────────────────────────────
+# TROUBLESHOOTING
+# ─────────────────────────────────────────────
+# Erro "conda não reconhecido":
+#   → Abra pelo Anaconda Prompt em vez do PowerShell
+#   → Ou rode: conda init powershell (e reabra o terminal)
+#
+# Erro "dbt não encontrado" após instalação:
+#   → Verifique se o ambiente está ativo: conda activate finops
+#   → Reinstale: pip install dbt-core dbt-bigquery
+#
+# Erro "Execution Policy" ao rodar .ps1:
+#   → Rode: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+#
+# Erro "gcloud não reconhecido":
+#   → Instale: https://cloud.google.com/sdk/docs/install
+#   → Reinicie o terminal após instalação

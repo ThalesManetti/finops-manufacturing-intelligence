@@ -1,0 +1,63 @@
+# =============================================================================
+# FinOps Manufacturing Intelligence — Ambiente Conda
+# =============================================================================
+# Uso:
+#   conda env create -f environment.yml
+#   conda activate finops
+#
+# Para atualizar após mudanças:
+#   conda env update -f environment.yml --prune
+#
+# Para remover o ambiente:
+#   conda deactivate
+#   conda env remove -n finops
+# =============================================================================
+
+name: finops
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # --- Python ---
+  - python=3.11
+
+  # --- Fase 1: Geração de Dados Sintéticos ---
+  - pandas>=2.1
+  - numpy>=1.24
+  - pyarrow>=14.0          # Leitura/escrita Parquet
+  - faker>=22.0            # Geração de dados fictícios
+
+  # --- Fase 1-2: Google Cloud Platform ---
+  - google-cloud-bigquery>=3.14
+  - google-cloud-storage>=2.14
+  - google-auth>=2.25
+  - db-dtypes>=1.2         # Tipos BigQuery para Pandas
+
+  # --- Fase 2: Orquestração (Airflow roda no Docker, mas útil pra testes locais) ---
+  # Nota: Airflow será executado via Docker, mas instalamos pra debug local
+  # Se der conflito, comente a linha abaixo (Airflow é pesado)
+  # - apache-airflow>=2.8
+
+  # --- Fase 3-4: dbt (instalado via pip por compatibilidade) ---
+  - pip:
+    - dbt-core>=1.7
+    - dbt-bigquery>=1.7
+
+  # --- Fase 6: Alertas e Monitoramento ---
+  - requests>=2.31         # HTTP para webhooks (Slack)
+  - python-dotenv>=1.0     # Gerenciamento de .env
+
+  # --- Qualidade de Dados (opcional - descomente se for usar) ---
+  # - great-expectations>=0.18
+
+  # --- Desenvolvimento ---
+  - ipykernel>=6.27        # Jupyter notebooks no VS Code
+  - black>=23.0            # Formatação de código
+  - ruff>=0.1              # Linter rápido
+  - pytest>=7.4            # Testes
+
+  # --- Utilitários ---
+  - tqdm>=4.66             # Barras de progresso
+  - tabulate>=0.9          # Tabelas formatadas no terminal
+  - pyyaml>=6.0            # Leitura de YAML (dbt configs)

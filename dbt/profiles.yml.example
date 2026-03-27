@@ -1,0 +1,21 @@
+# =============================================================================
+# FinOps Manufacturing Intelligence — dbt Profiles (Template)
+# =============================================================================
+# Copie este arquivo para ~/.dbt/profiles.yml e ajuste os valores.
+# NUNCA suba o profiles.yml real no Git (contém caminho da service account).
+# =============================================================================
+
+finops_manufacturing:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: SEU_PROJETO_GCP          # ex: finops-manufacturing-2026
+      dataset: silver_manufacturing
+      threads: 4
+      timeout_seconds: 300
+      location: US
+      priority: interactive
+      retries: 1
+      keyfile: /caminho/para/service-account.json   # ajuste para seu local

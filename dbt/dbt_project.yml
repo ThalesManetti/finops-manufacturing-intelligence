@@ -1,0 +1,62 @@
+# =============================================================================
+# FinOps Manufacturing Intelligence — dbt Project Configuration
+# =============================================================================
+# Este arquivo define as configurações do projeto dbt:
+#   - Nome e versão
+#   - Materialização padrão por camada
+#   - Caminhos de pastas
+# =============================================================================
+
+name: 'finops_manufacturing'
+version: '1.0.0'
+
+# Versão mínima do dbt
+require-dbt-version: [">=1.7.0", "<2.0.0"]
+
+# Profile de conexão (definido no profiles.yml)
+profile: 'finops_manufacturing'
+
+# ─────────────────────────────────────────────
+# CAMINHOS
+# ─────────────────────────────────────────────
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# ─────────────────────────────────────────────
+# MATERIALIZAÇÃO POR CAMADA
+# ─────────────────────────────────────────────
+# Cada camada tem sua estratégia de materialização:
+#   - staging (Silver): view — leve, sempre atualizado
+#   - intermediate: view — cálculos intermediários
+#   - marts (Gold): table — otimizado para consumo do Power BI
+models:
+  finops_manufacturing:
+    staging:
+      +materialized: view
+      +schema: silver_manufacturing
+      +tags: ['silver', 'staging']
+    intermediate:
+      +materialized: view
+      +schema: silver_manufacturing
+      +tags: ['intermediate']
+    marts:
+      +materialized: table
+      +schema: gold_finance
+      +tags: ['gold', 'marts']
+
+# ─────────────────────────────────────────────
+# VARIÁVEIS DO PROJETO
+# ─────────────────────────────────────────────
+vars:
+  # Alíquota efetiva IR + CSLL (Lucro Real)
+  aliquota_ir_csll: 0.34
+  # Threshold de margem para alertas (15%)
+  margem_threshold: 0.15

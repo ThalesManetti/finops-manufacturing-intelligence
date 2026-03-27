@@ -1,0 +1,60 @@
+# =============================================================================
+# FinOps Manufacturing Intelligence - .gitignore
+# =============================================================================
+
+# --- CREDENCIAIS (NUNCA suba no Git) ---
+credentials/
+*.json
+!dbt/packages.json
+!lifecycle.json
+
+# --- PYTHON ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-wheel-metadata/
+*.egg-info/
+.eggs/
+
+# --- DBT ---
+target/
+dbt_packages/
+dbt_modules/
+logs/
+.user.yml
+dbt/profiles.yml
+
+# --- AIRFLOW ---
+airflow/logs/
+airflow/plugins/__pycache__/
+*.pid
+
+# --- DATA GERADA (arquivos grandes, gerados pelo generate_data.py) ---
+csv/
+parquet/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- POWER BI ---
+*.pbix.bak
+
+# --- AMBIENTE ---
+.env
+.env.local
+.env.production
+
+# --- OS ---
+desktop.ini
+*.lnk

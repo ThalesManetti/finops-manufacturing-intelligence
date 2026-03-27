@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: int_receita_liquida
+    description: "Receita bruta, descontos, devoluções e receita líquida por mês e linha de produção."
+    columns:
+      - name: ano
+        tests: [not_null]
+      - name: mes
+        tests: [not_null]
+      - name: receita_bruta
+        tests: [not_null]
+      - name: receita_liquida
+        tests: [not_null]
+
+  - name: int_cmv_mensal
+    description: "CMV real mensal por linha de produção. CMV = custo unitário × quantidade vendida."
+    columns:
+      - name: ano
+        tests: [not_null]
+      - name: mes
+        tests: [not_null]
+      - name: cmv_total
+        tests: [not_null]
+
+  - name: int_despesas_dre
+    description: "Despesas pivoteadas por classificação DRE — pronto para montar a DRE."
+    columns:
+      - name: ano
+        tests: [not_null]
+      - name: mes
+        tests: [not_null]

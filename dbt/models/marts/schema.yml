@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: mart_dre_mensal
+    description: "DRE completa por mês — Receita Bruta até Lucro Líquido com IR/CSLL a 34%."
+    columns:
+      - name: ano
+        tests: [not_null]
+      - name: mes
+        tests: [not_null]
+      - name: receita_bruta
+        description: "Receita bruta total do mês"
+        tests: [not_null]
+      - name: receita_liquida
+        description: "Receita líquida (bruta - descontos - devoluções)"
+        tests: [not_null]
+      - name: margem_bruta_pct
+        description: "Margem bruta percentual"
+      - name: margem_ebitda_pct
+        description: "Margem EBITDA percentual"
+      - name: margem_liquida_pct
+        description: "Margem líquida percentual"
+
+  - name: mart_margem_produto
+    description: "Margem bruta por produto/mês com ranking de rentabilidade e flags de alerta."
+    columns:
+      - name: produto_id
+        tests: [not_null]
+      - name: ano
+        tests: [not_null]
+      - name: mes
+        tests: [not_null]
+      - name: status_margem
+        description: "SAUDAVEL, ABAIXO_THRESHOLD ou MARGEM_NEGATIVA"
+        tests:
+          - accepted_values:
+              values: ['SAUDAVEL', 'ABAIXO_THRESHOLD', 'MARGEM_NEGATIVA']
+
+  - name: mart_orcado_realizado
+    description: "Orçado vs realizado por natureza de despesa com flags de desvio."
+    columns:
+      - name: ano
+        tests: [not_null]
+      - name: mes
+        tests: [not_null]
+      - name: status_desvio
+        description: "DENTRO_ORCAMENTO, DESVIO_MODERADO, DESVIO_ALERTA ou DESVIO_CRITICO"
+        tests:
+          - accepted_values:
+              values: ['DENTRO_ORCAMENTO', 'DESVIO_MODERADO', 'DESVIO_ALERTA', 'DESVIO_CRITICO']
+
+  - name: mart_kpis_executivo
+    description: "KPIs consolidados com evolução MoM, YoY e YTD para dashboard Power BI."
+    columns:
+      - name: ano
+        tests: [not_null]
+      - name: mes
+        tests: [not_null]
+      - name: receita_liquida
+        tests: [not_null]
